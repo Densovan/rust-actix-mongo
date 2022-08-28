@@ -1,9 +1,9 @@
 use actix_web::{
-    get, post,
+    post,
     web::{self, Json},
-    App, HttpResponse, HttpServer,
+    HttpResponse,
 };
-use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
+use mongodb::Client;
 
 use crate::models::user_model::User;
 
@@ -13,11 +13,12 @@ async fn register(client: web::Data<Client>, user: Json<User>) -> HttpResponse {
     let collection = client.database("rustcms").collection("users");
 
     let data = User {
+        _id: None,
         fullname: user.fullname.to_owned(),
-        email: user.email.to_owned(),
-        password: user.password.to_owned(),
         bio: user.bio.to_owned(),
         phone: user.phone.to_owned(),
+        email: user.email.to_owned(),
+        password: user.password.to_owned(),
     };
 
     let result = collection.insert_one(data, None).await;
